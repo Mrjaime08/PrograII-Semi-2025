@@ -19,6 +19,8 @@ import androidx.core.content.FileProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import com.couchbase.lite.*;
+
 import org.json.JSONObject;
 
 import java.io.File;
@@ -34,22 +36,38 @@ public class MainActivity extends AppCompatActivity {
     ImageView img;
     String urlCompletaFoto = "";
     Intent tomarFotoIntent;
+
+    // Base de datos Couchbase
+    Database database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Inicializar Couchbase Lite
+        CouchbaseLite.init(this);
+        DatabaseConfiguration config = new DatabaseConfiguration();
+        try {
+            database = new Database("productosdb", config);
+        } catch (CouchbaseLiteException e) {
+            mostrarMsg("Error al crear DB Couchbase: " + e.getMessage());
+            return;
+        }
+
         img = findViewById(R.id.imgFotoProducto);
         db = new DB(this);
         btn = findViewById(R.id.btnGuardarproducto);
-        btn.setOnClickListener(view->guardarProducto());
+        btn.setOnClickListener(view -> guardarProducto());
 
         fab = findViewById(R.id.fabListaProductos);
-        fab.setOnClickListener(view->abrirVentana());
+        fab.setOnClickListener(view -> abrirVentana());
 
         mostrarDatos();
         tomarFoto();
     }
-    private void mostrarDatos(){
+
+    private void mostrarDatos() {
         try {
             Bundle parametros = getIntent().getExtras();
             accion = parametros.getString("accion");
@@ -75,12 +93,12 @@ public class MainActivity extends AppCompatActivity {
                 urlCompletaFoto = datos.getString("urlFoto");
                 img.setImageURI(Uri.parse(urlCompletaFoto));
             }
-        }catch (Exception e){
-            mostrarMsg("Error: "+e.getMessage());
+        } catch (Exception e) {
+            mostrarMsg("Error: " + e.getMessage());
         }
     }
-    private void tomarFoto(){
 
+    private void tomarFoto() {
         img.setOnClickListener(view -> {
             tomarFotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             File fotoProducto = null;
@@ -93,33 +111,32 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(tomarFotoIntent, 1);
                 } else {
                     mostrarMsg("No se pudo crear la imagen");
-
                 }
-            }catch (Exception e){
-                mostrarMsg("Error: "+e.getMessage());
+            } catch (Exception e) {
+                mostrarMsg("Error: " + e.getMessage());
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        try{
-            if( requestCode==1 && resultCode==RESULT_OK ){
-                //Bitmap imagenBitmap = BitmapFactory.decodeFile(urlCompletaFoto);
+        try {
+            if (requestCode == 1 && resultCode == RESULT_OK) {
                 img.setImageURI(Uri.parse(urlCompletaFoto));
-            }else{
-                mostrarMsg("No se tomo la foto.");
+            } else {
+                mostrarMsg("No se tomó la foto.");
             }
-        }catch (Exception e){
-            mostrarMsg("Error: "+e.getMessage());
+        } catch (Exception e) {
+            mostrarMsg("Error: " + e.getMessage());
         }
     }
 
     private File crearImagenProducto() throws Exception {
         String fechaHoraMs = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()),
-                fileName = "imagen_"+ fechaHoraMs+"_";
+                fileName = "imagen_" + fechaHoraMs + "_";
         File dirAlmacenamiento = getExternalFilesDir(Environment.DIRECTORY_DCIM);
-        if( dirAlmacenamiento.exists()==false ){
+        if (!dirAlmacenamiento.exists()) {
             dirAlmacenamiento.mkdir();
         }
         File image = File.createTempFile(fileName, ".jpg", dirAlmacenamiento);
@@ -127,13 +144,15 @@ public class MainActivity extends AppCompatActivity {
         return image;
     }
 
-    private void mostrarMsg(String msg){
+    private void mostrarMsg(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
-    private void abrirVentana(){
+
+    private void abrirVentana() {
         Intent intent = new Intent(this, lista_producto.class);
         startActivity(intent);
     }
+
     private void guardarProducto() {
         tempVal = findViewById(R.id.txtCodigo);
         String codigo = tempVal.getText().toString();
@@ -143,14 +162,12 @@ public class MainActivity extends AppCompatActivity {
 
         tempVal = findViewById(R.id.txtpresentacion);
         String presentacion = tempVal.getText().toString();
+
         tempVal = findViewById(R.id.txtMarca);
         String marca = tempVal.getText().toString();
 
         tempVal = findViewById(R.id.txtPrecio);
         String precio = tempVal.getText().toString();
-
-
-
 
         String[] datos = {idProducto, codigo, nombre, presentacion, marca, precio, urlCompletaFoto};
 
@@ -161,6 +178,21 @@ public class MainActivity extends AppCompatActivity {
             db.administrar_productos("modificar", datos);
             Toast.makeText(getApplicationContext(), "Registro actualizado con éxito.", Toast.LENGTH_LONG).show();
         }
+
+        // Guardar en Couchbase Lite
+        try {
+            MutableDocument doc = new MutableDocument();
+            doc.setString("codigo", codigo);
+            doc.setString("nombre", nombre);
+            doc.setString("presentacion", presentacion);
+            doc.setString("marca", marca);
+            doc.setString("precio", precio);
+            doc.setString("urlFoto", urlCompletaFoto);
+            database.save(doc);
+        } catch (CouchbaseLiteException e) {
+            mostrarMsg("Error al guardar en Couchbase: " + e.getMessage());
+        }
+
         abrirVentana();
     }
 }
