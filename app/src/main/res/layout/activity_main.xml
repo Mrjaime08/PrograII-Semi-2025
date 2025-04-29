@@ -5,106 +5,98 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F8F8"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/header"
+    <EditText
+        android:id="@+id/txtCodigo"
+        android:hint="Código"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/txtDescripcion"
+        android:hint="Descripción"
+        android:layout_below="@id/txtCodigo"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/txtMarca"
+        android:hint="Marca"
+        android:layout_below="@id/txtDescripcion"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/txtPresentacion"
+        android:hint="Presentación"
+        android:layout_below="@id/txtMarca"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/txtPrecio"
+        android:hint="Precio"
+        android:layout_below="@id/txtPresentacion"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#FF9800"
-        android:padding="20dp">
+        android:inputType="numberDecimal"/>
 
-        <TextView
-            android:id="@+id/txtTitulo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tienda Segovia"
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-            />
-
-        <TextView
-            android:id="@+id/txtDescripcionApp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Software para la gestión de tu tienda de manera accesible y sencilla!"
-            android:textSize="18sp"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:layout_marginTop="8dp"
-            />
-
-    </LinearLayout>
-
-    <ScrollView
+    <EditText
+        android:id="@+id/txtCosto"
+        android:hint="Costo"
+        android:layout_below="@id/txtPrecio"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/header">
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+    <EditText
+        android:id="@+id/txtStock"
+        android:hint="Stock"
+        android:layout_below="@id/txtCosto"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
-            <ImageButton
-                android:id="@+id/imgFotoProducto"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:src="@mipmap/ic_launcher_round" />
+    <ImageButton
+        android:id="@+id/imgFotoProducto"
+        android:layout_below="@id/txtStock"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:contentDescription="Foto del producto"/>
 
-            <EditText
-                android:id="@+id/txtCodigo"
-                android:hint="Codg produc"
-                android:layout_marginTop="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <EditText
-                android:id="@+id/txtNombreProducto"
-                android:hint="Producto"
-                android:layout_marginTop="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <EditText
-                android:id="@+id/txtpresentacion"
-                android:hint="Presentacion"
-                android:layout_marginTop="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <EditText
-                android:id="@+id/txtMarca"
-                android:hint="Marca"
-                android:layout_marginTop="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <EditText
-                android:id="@+id/txtPrecio"
-                android:hint="Precio/unidad"
-                android:layout_marginTop="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <Button
-                android:id="@+id/btnGuardarproducto"
-                android:layout_width="284dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Agregar Producto" />
-
-        </LinearLayout>
-
-    </ScrollView>
+    <Button
+        android:id="@+id/btnGuardarProducto"
+        android:text="Guardar Producto"
+        android:layout_below="@id/imgFotoProducto"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabListaProductos"
@@ -113,6 +105,7 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:contentDescription="Lista de productos"/>
 
 </RelativeLayout>

@@ -10,70 +10,66 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
 public class AdaptadorProductos extends BaseAdapter {
-
-
-
     Context context;
-    ArrayList<productos> aProductos;
-
-    productos misProductos;
-
+    ArrayList<Producto> alProductos;
+    Producto miProducto;
     LayoutInflater inflater;
 
-    public AdaptadorProductos(Context context, ArrayList<productos> aProducts) {
+    public AdaptadorProductos(Context context, ArrayList<Producto> alProductos) {
         this.context = context;
-        this.aProductos = aProducts;
+        this.alProductos = alProductos;
     }
 
-    @Override
-    public int getCount() {
-        return aProductos.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return aProductos.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
+    @Override public int getCount() { return alProductos.size(); }
+    @Override public Object getItem(int position) { return alProductos.get(position); }
+    @Override public long getItemId(int position) { return 0; }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View vista = inflater.inflate(R.layout.fotos, parent, false);
+        View itemView = convertView;
         try {
-            misProductos = aProductos.get(position);
-            TextView tempVal = vista.findViewById(R.id.lblCodProducto);
-            tempVal.setText(misProductos.getCodigo());
+            if (itemView == null) {
+                inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                itemView = inflater.inflate(R.layout.fotos, parent, false);
+            }
 
-            tempVal = vista.findViewById(R.id.lblProducto);
-            tempVal.setText(misProductos.getNombre());
+            miProducto = alProductos.get(position);
 
-            tempVal = vista.findViewById(R.id.lblpresentacion);
-            tempVal.setText(misProductos.getPresentacion());
+            // Configurar código
+            TextView lblCodigo = itemView.findViewById(R.id.lblCodigoAdaptador);
+            lblCodigo.setText(miProducto.getCodigo());
 
-            tempVal = vista.findViewById(R.id.lblMarca);
-            tempVal.setText(misProductos.getMarca());
+            // Configurar descripción
+            TextView lblDescripcion = itemView.findViewById(R.id.lblDescripcionAdaptador);
+            lblDescripcion.setText(miProducto.getDescripcion());
 
-            tempVal = vista.findViewById(R.id.lblPrecioUnidad);
-            tempVal.setText(String.valueOf(misProductos.getPrecio()));
+            // Configurar precio
+            TextView lblPrecio = itemView.findViewById(R.id.lblPrecioAdaptador);
+            lblPrecio.setText("$" + miProducto.getPrecio());
 
-            ImageView img = vista.findViewById(R.id.imgFotoAdaptador);
-            Bitmap imagenBitmap = BitmapFactory.decodeFile(misProductos.getUrlFoto());
-            img.setImageBitmap(imagenBitmap);
+            // Configurar imagen
+            ImageView imgFoto = itemView.findViewById(R.id.imgFotoAdaptador);
+            String fotoPath = miProducto.getFoto();
 
-        }catch (Exception e){
-            Toast.makeText(context, "error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            if (fotoPath != null && !fotoPath.isEmpty()) {
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeFile(fotoPath);
+                    imgFoto.setImageBitmap(bitmap);
+                } catch (Exception e) {
+                    // Si hay error cargando la imagen, mostrar placeholder
+                    imgFoto.setImageResource(R.mipmap.ic_launcher_round);
+                }
+            } else {
+                // Si no hay ruta de imagen válida
+                imgFoto.setImageResource(R.mipmap.ic_launcher_round);
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(context, "Error cargando producto: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-
-        return vista;
+        return itemView;
     }
-
 }
